@@ -116,6 +116,9 @@ final class SlaticoIconsTests: XCTestCase {
     }
 
     func testDuotoneAndColorLayerRoles() {
+        let singleLayerLineIcons: Set<SlaticoIconName> = [.minus, .plus]
+        var secondaryDuotoneIconCount = 0
+
         for icon in SlaticoIconName.allCases {
             let duotoneSpec = SlaticoVectorCatalog.spec(for: icon, style: .duotone)
             let hasSecondary = duotoneSpec.layers.contains { layer in
@@ -126,8 +129,13 @@ final class SlaticoIconsTests: XCTestCase {
                 if case .primary = layer.role { return true }
                 return false
             }
-            XCTAssertTrue(hasSecondary, "Duotone \(icon.rawValue) must contain at least one .secondary tone layer")
             XCTAssertTrue(hasPrimary, "Duotone \(icon.rawValue) must contain at least one .primary structural layer")
+            if singleLayerLineIcons.contains(icon) {
+                XCTAssertFalse(hasSecondary, "Open-line Duotone icon \(icon.rawValue) has no enclosed secondary fill")
+            } else {
+                XCTAssertTrue(hasSecondary, "Duotone \(icon.rawValue) must contain at least one .secondary tone layer")
+                secondaryDuotoneIconCount += 1
+            }
 
             let colorSpec = SlaticoVectorCatalog.spec(for: icon, style: .color)
             for layer in colorSpec.layers {
@@ -138,6 +146,8 @@ final class SlaticoIconsTests: XCTestCase {
                 }
             }
         }
+
+        XCTAssertEqual(secondaryDuotoneIconCount, 21)
     }
 
     func testAll161BundledSVGResourcesLoadFromBundleModule() {
