@@ -46,9 +46,11 @@ public enum SlaticoCoreGraphicsRenderer {
                 let alphaVal = secondaryOpacity ?? CGFloat(layer.defaultOpacity)
                 resolvedAlpha = min(1.0, max(0.0, alphaVal))
 
-            case let .fixedColor(_, red, green, blue):
-                if let explicitOverride = primaryColor {
-                    resolvedColor = explicitOverride
+            case let .fixedColor(hex, red, green, blue):
+                if hex.uppercased() == "#000000", let explicitSecondary = secondaryColor {
+                    resolvedColor = explicitSecondary
+                } else if hex.uppercased() != "#000000", let explicitPrimary = primaryColor {
+                    resolvedColor = explicitPrimary
                 } else {
                     resolvedColor = CGColor(
                         colorSpace: colorSpace,

@@ -115,9 +115,13 @@ public struct SlaticoIcon: View {
             let alpha = min(1.0, max(0.0, secondaryOpacity ?? layer.defaultOpacity))
             return base.opacity(alpha)
 
-        case let .fixedColor(_, red, green, blue):
-            if let explicitOverride = primaryColor {
-                return explicitOverride.opacity(layer.defaultOpacity)
+        case let .fixedColor(hex, red, green, blue):
+            if hex.uppercased() == "#000000" {
+                if let explicitSecondary = secondaryColor {
+                    return explicitSecondary.opacity(layer.defaultOpacity)
+                }
+            } else if let explicitPrimary = primaryColor {
+                return explicitPrimary.opacity(layer.defaultOpacity)
             }
             return Color(.sRGB, red: red, green: green, blue: blue, opacity: layer.defaultOpacity)
         }

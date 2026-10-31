@@ -1,1 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path fill="#FF6040" d="M21 11.425a.575.575 0 0 1 0 1.15H3a.575.575 0 0 1 0-1.15z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path fill="var(--slatico-primary-color, #FF6040)" d="M21 11.425a.575.575 0 0 1 0 1.15H3a.575.575 0 0 1 0-1.15z"/></svg>
