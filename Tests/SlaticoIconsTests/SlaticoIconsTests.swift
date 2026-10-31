@@ -14,6 +14,10 @@ import AppKit
 
 final class SlaticoIconsTests: XCTestCase {
     private static let tier1KebabNames: [String] = [
+        "arrow-down",
+        "arrow-up",
+        "arrow-up-left",
+        "arrow-up-right",
         "bell",
         "cloud",
         "cloud-check",
@@ -40,8 +44,8 @@ final class SlaticoIconsTests: XCTestCase {
     ]
 
     func testExactTier1IconFamilyCountAndNames() {
-        XCTAssertEqual(SlaticoIconName.allCases.count, 23, "Slatico Tier 1 must have exactly 23 icon families")
-        XCTAssertEqual(SlaticoVectorCatalog.familyCount, 23)
+        XCTAssertEqual(SlaticoIconName.allCases.count, 27, "Slatico Tier 1 must have exactly 27 icon families")
+        XCTAssertEqual(SlaticoVectorCatalog.familyCount, 27)
 
         let actualKebabNames = SlaticoIconName.allCases.map(\.rawValue)
         XCTAssertEqual(actualKebabNames, Self.tier1KebabNames)
@@ -78,8 +82,8 @@ final class SlaticoIconsTests: XCTestCase {
         XCTAssertFalse(SlaticoStyle.color.isMonochrome)
     }
 
-    func testAll161VectorCatalogEntriesAndCGPathsAreValid() {
-        XCTAssertEqual(SlaticoVectorCatalog.totalVariants, 161)
+    func testAll189VectorCatalogEntriesAndCGPathsAreValid() {
+        XCTAssertEqual(SlaticoVectorCatalog.totalVariants, 189)
 
         var verifiedCount = 0
         for icon in SlaticoIconName.allCases {
@@ -112,7 +116,7 @@ final class SlaticoIconsTests: XCTestCase {
             }
         }
 
-        XCTAssertEqual(verifiedCount, 161)
+        XCTAssertEqual(verifiedCount, 189)
     }
 
     func testDuotoneAndColorLayerRoles() {
@@ -147,10 +151,10 @@ final class SlaticoIconsTests: XCTestCase {
             }
         }
 
-        XCTAssertEqual(secondaryDuotoneIconCount, 21)
+        XCTAssertEqual(secondaryDuotoneIconCount, 25)
     }
 
-    func testAll161BundledSVGResourcesLoadFromBundleModule() {
+    func testAll189BundledSVGResourcesLoadFromBundleModule() {
         var loadedCount = 0
         for icon in SlaticoIconName.allCases {
             for style in SlaticoStyle.allCases {
@@ -172,7 +176,7 @@ final class SlaticoIconsTests: XCTestCase {
                 loadedCount += 1
             }
         }
-        XCTAssertEqual(loadedCount, 161)
+        XCTAssertEqual(loadedCount, 189)
     }
 
     func testCoreGraphicsRenderingProducesNonEmptyImages() {
