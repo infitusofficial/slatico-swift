@@ -19,7 +19,7 @@ concurrency:
 jobs:
   macos:
     name: Resolve, Build & Test (macOS — SwiftUI + AppKit)
-    runs-on: macos-15
+    runs-on: macos-15-intel
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -43,7 +43,7 @@ jobs:
 
   ios-simulator:
     name: Build & Test (iOS Simulator — SwiftUI + UIKit)
-    runs-on: macos-15
+    runs-on: macos-15-intel
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -81,7 +81,7 @@ jobs:
 
   consumer:
     name: README Examples in a Clean Consumer (macOS run + iOS Simulator build)
-    runs-on: macos-15
+    runs-on: macos-15-intel
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
