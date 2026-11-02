@@ -35,8 +35,17 @@ esac
 rm -rf "$WORK"
 mkdir -p "$WORK"
 cp -R "$HERE/Sources" "$WORK/Sources"
-TEMPLATE="$(cat "$HERE/Package.swift.template")"
-printf '%s\n' "${TEMPLATE/__SLATICO_DEPENDENCY__/$DEP}" > "$WORK/Package.swift"
+"${PYTHON:-python3}" - "$HERE/Package.swift.template" "$WORK/Package.swift" "$DEP" <<'PY'
+import sys
+src, dst, dep = sys.argv[1:4]
+text = open(src, encoding="utf-8").read()
+assert "__SLATICO_DEPENDENCY__" in text, "placeholder missing from template"
+open(dst, "w", encoding="utf-8").write(text.replace("__SLATICO_DEPENDENCY__", dep))
+PY
+if grep -q "__SLATICO_DEPENDENCY__" "$WORK/Package.swift"; then
+  echo "::error::Dependency placeholder was not substituted"
+  exit 1
+fi
 
 cd "$WORK"
 echo "Consumer manifest dependency: $DEP"
@@ -48,7 +57,7 @@ if [ "$MODE" = "remote" ]; then
   if [ -z "$EXPECTED_REVISION" ]; then
     EXPECTED_REVISION="$(git ls-remote "$URL" "refs/tags/$VERSION" | cut -f1)"
   fi
-  python3 - "$VERSION" "$EXPECTED_REVISION" <<'PY'
+  "${PYTHON:-python3}" - "$VERSION" "$EXPECTED_REVISION" <<'PY'
 import json, sys
 version, expected = sys.argv[1], sys.argv[2]
 pins = json.load(open("Package.resolved"))["pins"]
