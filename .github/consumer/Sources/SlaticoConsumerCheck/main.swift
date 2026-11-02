@@ -50,6 +50,8 @@ func distinctColors(_ image: CGImage) -> Set<Int> {
     return colors
 }
 
+setvbuf(stdout, nil, _IOLBF, 0)
+
 // 1. Catalog shape
 check(SlaticoIconName.allCases.count == 27, "Expected 27 icon families, got \(SlaticoIconName.allCases.count)")
 check(SlaticoStyle.allCases.count == 7, "Expected 7 styles, got \(SlaticoStyle.allCases.count)")
@@ -112,7 +114,10 @@ for (index, image) in nsImages.enumerated() {
 }
 #endif
 
-// 7. SwiftUI rendering via ImageRenderer
+// 7. SwiftUI rendering via ImageRenderer.
+// ImageRenderer requires Metal, which headless GitHub-hosted macOS VMs do not provide, so this
+// pixel check is opt-in (SLATICO_SWIFTUI_IMAGE_RENDERER=1) for machines with a GPU. On CI, SwiftUI
+// coverage comes from compiling the README views here and from the package's XCTest suite.
 @available(macOS 13.0, *)
 @MainActor
 func renderSwiftUI() -> (CGImage?, CGImage?) {
@@ -122,7 +127,8 @@ func renderSwiftUI() -> (CGImage?, CGImage?) {
     return (single.cgImage, row.cgImage)
 }
 
-if #available(macOS 13.0, *) {
+let swiftUIPixelCheck = ProcessInfo.processInfo.environment["SLATICO_SWIFTUI_IMAGE_RENDERER"] == "1"
+if swiftUIPixelCheck, #available(macOS 13.0, *) {
     let rendered = await renderSwiftUI()
     if let icon = rendered.0 {
         check(paintedPixelCount(icon) > 0, "SwiftUI SlaticoIcon rendered an empty image")
@@ -133,7 +139,7 @@ if #available(macOS 13.0, *) {
 }
 
 if failures.isEmpty {
-    print("✅ SlaticoIcons consumer check passed: 27 families, 7 styles, \(renderedVariants) rendered variants, \(loadedResources) bundled SVGs, Duotone/Color, AppKit and SwiftUI rendering.")
+    print("✅ SlaticoIcons consumer check passed: 27 families, 7 styles, \(renderedVariants) rendered variants, \(loadedResources) bundled SVGs, Duotone/Color, AppKit rendering, README SwiftUI views compiled\(swiftUIPixelCheck ? ", SwiftUI ImageRenderer pixels" : "").")
 } else {
     print("❌ SlaticoIcons consumer check failed (\(failures.count)):")
     failures.forEach { print("  - \($0)") }
