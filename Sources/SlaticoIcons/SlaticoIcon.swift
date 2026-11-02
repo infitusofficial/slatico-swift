@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Native SwiftUI vector icon view supporting all 23 Tier 1 Slatico icon families
+/// Native SwiftUI vector icon view supporting all 27 Tier 1 Slatico icon families
 /// across all 7 official styles (`thin`, `light`, `regular`, `bold`, `fill`, `duotone`, and `color`).
 ///
 /// - Monochrome styles (`.thin`, `.light`, `.regular`, `.bold`, `.fill`) tint using `color` (or `.primary`).

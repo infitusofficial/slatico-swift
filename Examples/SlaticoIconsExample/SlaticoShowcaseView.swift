@@ -1,7 +1,7 @@
 import SwiftUI
 import SlaticoIcons
 
-/// Interactive SwiftUI showcase view demonstrating all 23 Tier 1 Slatico icon families
+/// Interactive SwiftUI showcase view demonstrating all 27 Tier 1 Slatico icon families
 /// across all 7 styles (`thin`, `light`, `regular`, `bold`, `fill`, `duotone`, `color`),
 /// live size and color controls, Duotone secondary tinting, search filtering,
 /// light/dark color scheme preview, and VoiceOver accessibility.
@@ -52,7 +52,7 @@ public struct SlaticoShowcaseView: View {
 
     private var controlsSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            TextField("Search 23 icons by name…", text: $searchQuery)
+            TextField("Search \(SlaticoIconName.allCases.count) icons by name…", text: $searchQuery)
                 .textFieldStyle(.roundedBorder)
 
             Picker("Style", selection: $selectedStyle) {

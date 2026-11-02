@@ -1,0 +1,33 @@
+// swift-tools-version: 5.9
+// Clean external consumer used by CI. `__SLATICO_DEPENDENCY__` is replaced with either a
+// local path dependency (pre-release README/API check) or the remote Git URL pinned to an exact tag.
+import PackageDescription
+
+let package = Package(
+    name: "SlaticoConsumer",
+    platforms: [
+        .iOS(.v15),
+        .macOS(.v12)
+    ],
+    products: [
+        .library(name: "SlaticoConsumer", targets: ["SlaticoConsumer"])
+    ],
+    dependencies: [
+        __SLATICO_DEPENDENCY__
+    ],
+    targets: [
+        .target(
+            name: "SlaticoConsumer",
+            dependencies: [
+                .product(name: "SlaticoIcons", package: "slatico-swift")
+            ]
+        ),
+        .executableTarget(
+            name: "SlaticoConsumerCheck",
+            dependencies: [
+                "SlaticoConsumer",
+                .product(name: "SlaticoIcons", package: "slatico-swift")
+            ]
+        )
+    ]
+)

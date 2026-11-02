@@ -1,0 +1,90 @@
+# Standalone CI for the slatico-swift repository.
+# Source of truth: packages/swift in https://github.com/infitusofficial/slatico (published via git subtree split).
+name: Swift Package CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macos:
+    name: Resolve, Build & Test (macOS — SwiftUI + AppKit)
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Toolchain versions
+        run: |
+          swift --version
+          xcodebuild -version
+
+      - name: Validate Package.swift manifest
+        run: swift package dump-package > /dev/null
+
+      - name: swift package resolve
+        run: swift package resolve
+
+      - name: swift build
+        run: swift build -v
+
+      - name: swift test
+        run: swift test -v
+
+  ios-simulator:
+    name: Build & Test (iOS Simulator — SwiftUI + UIKit)
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: List package schemes
+        run: xcodebuild -list
+
+      - name: Build SlaticoIcons for iOS Simulator
+        run: |
+          xcodebuild build \
+            -scheme SlaticoIcons \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO
+
+      - name: Run XCTest suite on an iOS Simulator (UIKit renderers)
+        run: |
+          SIM_ID="$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          ios = sorted((r for r in devices if "iOS" in r), reverse=True)
+          for runtime in ios:
+              for d in devices[runtime]:
+                  if d["name"].startswith("iPhone"):
+                      print(d["udid"]); sys.exit(0)
+          sys.exit("no available iPhone simulator")
+          ')"
+          echo "Using simulator ${SIM_ID}"
+          if xcodebuild -list | grep -q "SlaticoIcons-Package"; then SCHEME="SlaticoIcons-Package"; else SCHEME="SlaticoIcons"; fi
+          xcodebuild test \
+            -scheme "${SCHEME}" \
+            -destination "id=${SIM_ID}" \
+            CODE_SIGNING_ALLOWED=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO
+
+  consumer:
+    name: README Examples in a Clean Consumer (macOS run + iOS Simulator build)
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Build and run local-path consumer
+        run: bash .github/consumer/run-consumer.sh local "${GITHUB_WORKSPACE}"

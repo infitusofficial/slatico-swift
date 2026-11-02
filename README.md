@@ -17,32 +17,38 @@ Supports all **27 Tier 1 production icon families** across all **7 official styl
 
 ## Installation (Swift Package Manager)
 
-### Local Monorepo / Relative Path Dependency
+### Xcode
 
-Because `Package.swift` resides at `packages/swift/Package.swift` inside the Slatico monorepo, reference it via a local package path when developing against the monorepo checkout:
+1. **File → Add Package Dependencies…**
+2. Enter `https://github.com/infitusofficial/slatico-swift.git`
+3. Choose **Up to Next Major Version** starting at `0.1.0`, then add the `SlaticoIcons` library to your app target.
+
+### `Package.swift`
 
 ```swift
 dependencies: [
-    .package(path: "../slatico/packages/swift")
+    .package(url: "https://github.com/infitusofficial/slatico-swift.git", from: "0.1.0")
 ],
 targets: [
     .target(
         name: "YourApp",
         dependencies: [
-            .product(name: "SlaticoIcons", package: "SlaticoIcons")
+            .product(name: "SlaticoIcons", package: "slatico-swift")
         ]
     )
 ]
 ```
 
-### Git Repository Dependency (Release Distribution)
+> SwiftPM identifies a remote package by the last path component of its URL, so the `package:` argument is `"slatico-swift"`.
 
-When consuming from the standalone Swift mirror repository or a root-manifest release tag:
+### Contributing from the Slatico Monorepo
+
+`slatico-swift` is published from `packages/swift` in the [Slatico monorepo](https://github.com/infitusofficial/slatico); changes are made there. To develop against a local monorepo checkout, use a path dependency (its identity is the directory name, `swift`):
 
 ```swift
-dependencies: [
-    .package(url: "https://github.com/infitusofficial/slatico-swift.git", from: "0.1.0")
-]
+.package(path: "../slatico/packages/swift")
+// …
+.product(name: "SlaticoIcons", package: "swift")
 ```
 
 ---
@@ -106,11 +112,8 @@ HStack(spacing: 12) {
 }
 .slaticoIconStyle(.duotone)
 .slaticoIconSize(24)
-.slaticoIconColor(
-    .indigo,
-    secondaryColor: .orange,
-    secondaryOpacity: 0.25
-)
+.slaticoIconColor(.indigo)
+.slaticoIconSecondaryColor(.orange, opacity: 0.25)
 ```
 
 ---

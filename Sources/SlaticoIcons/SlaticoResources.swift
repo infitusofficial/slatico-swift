@@ -1,6 +1,6 @@
 import Foundation
 
-/// Provides direct access to the 161 optimized SVG files bundled in `Bundle.module`.
+/// Provides direct access to the 189 optimized SVG files bundled in `Bundle.module`.
 public enum SlaticoResources {
     /// Returns the file `URL` for the bundled `.svg` asset corresponding to `icon` and `style`.
     public static func svgURL(for icon: SlaticoIconName, style: SlaticoStyle = .regular) -> URL? {
